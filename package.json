@@ -1,0 +1,18 @@
+{
+  "name": "studys",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@expo/metro-runtime": "~4.0.0",
+    "expo": "^52.0.25",
+    "react-dom": "18.3.1",
+    "react-native-web": "~0.19.13"
+  }
+}

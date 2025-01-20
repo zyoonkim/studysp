@@ -1,0 +1,40 @@
+{
+    "ShapiroHours": {
+        "Sunday": "Opens at 10am",
+        "Monday": "Open 24 hours",
+        "Tuesday": "Open 24 hours",
+        "Wednesday": "Open 24 hours",
+        "Thursday": "Open 24 hours",
+        "Friday": "Closes at 6pm",
+        "Saturday": "10am - 6pm"
+    },
+    "HatcherHours": {
+        "Sunday": "1pm - 12am",
+        "Monday": "8am - 12am",
+        "Tuesday": "8am - 12am",
+        "Wednesday": "8am - 12am",
+        "Thursday": "8am - 12am",
+        "Friday": "8am - 5pm",
+        "Saturday": "10am - 6pm"
+    },
+    "LawHours": {
+        "Sunday": "8am - 8pm",
+        "Monday": "7:30am - 8pm",
+        "Tuesday": "7:30am - 8pm",
+        "Wednesday": "7:30am - 8pm",
+        "Thursday": "7:30am - 8pm",
+        "Friday": "7:30am - 8pm",
+        "Saturday": "8am - 8pm"
+    },
+    "DudeHours": {
+        "Sunday": "Open 24 hours",
+        "Monday": "Open 24 hours",
+        "Tuesday": "Open 24 hours",
+        "Wednesday": "Open 24 hours",
+        "Thursday": "Open 24 hours",
+        "Friday": "Open 24 hours",
+        "Saturday": "Open 24 hours"
+    }
+    
+
+}
