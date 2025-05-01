@@ -1,5 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Pressable, ScrollView, StyleSheet, Image, Text, View, SafeAreaView } from 'react-native';
+import { Camera } from 'expo-camera';
+import axios from 'axios';
 import { useFonts, DMSans_400Regular } from '@expo-google-fonts/dm-sans';
 
 export default function App() {
@@ -7,11 +9,43 @@ export default function App() {
     DMSans_400Regular,
   });
   const [showTextBlocks, setShowTextBlocks] = useState([false, false, false, false]);
+  const [hasPermission, setHasPermission] = useState(null);
+  const [peopleCount, setPeopleCount] = useState(null);
+  const [processedImage, setProcessedImage] = useState(null);
+  const cameraRef = useRef(null);
+
+  useEffect(() => {
+    (async () => {
+      const { status } = await Camera.requestCameraPermissionsAsync();
+      setHasPermission(status === 'granted');
+    })();
+  }, []);
 
   const handlePress = (index) => {
     setShowTextBlocks((prev) =>
       prev.map((visible, i) => (i === index ? !visible : visible))
     );
+  };
+
+  const takePicture = async () => {
+    if (cameraRef.current) {
+      try {
+        const photo = await cameraRef.current.takePictureAsync({
+          base64: true,
+          quality: 0.5,
+        });
+
+        // Send image to Flask API
+        const response = await axios.post('http://localhost:5000/detect', {
+          image: photo.base64
+        });
+
+        setPeopleCount(response.data.people_count);
+        setProcessedImage(`data:image/jpeg;base64,${response.data.processed_image}`);
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    }
   };
 
   const libraries = [
@@ -33,9 +67,16 @@ export default function App() {
     },
   ];
 
-  // Show a loading state until the fonts are loaded
   if (!fontsLoaded) {
     return <View style={styles.loadingContainer}><Text>Loading fonts...</Text></View>;
+  }
+
+  if (hasPermission === null) {
+    return <View style={styles.loadingContainer}><Text>Requesting camera permission...</Text></View>;
+  }
+
+  if (hasPermission === false) {
+    return <View style={styles.loadingContainer}><Text>No access to camera</Text></View>;
   }
 
   return (
@@ -51,18 +92,38 @@ export default function App() {
         />
       </View>
 
+      {/* Camera Section */}
+      <View style={styles.cameraContainer}>
+        <Camera style={styles.camera} ref={cameraRef}>
+          <View style={styles.cameraButtonContainer}>
+            <Pressable style={styles.cameraButton} onPress={takePicture}>
+              <Text style={styles.cameraButtonText}>Take Picture</Text>
+            </Pressable>
+          </View>
+        </Camera>
+        {processedImage && (
+          <View style={styles.resultContainer}>
+            <Image
+              source={{ uri: processedImage }}
+              style={styles.processedImage}
+            />
+            <Text style={styles.resultText}>
+              People Count: {peopleCount}
+            </Text>
+          </View>
+        )}
+      </View>
+
       {/* Dropdowns */}
       <ScrollView style={{ flex: 1, width: '100%' }}>
         {libraries.map((library, index) => (
           <View style={styles.sections} key={index}>
-            {/* Buttons */}
-            <Pressable style={styles.button} onPress={() => handlePress(index)} >
+            <Pressable style={styles.button} onPress={() => handlePress(index)}>
               <Text style={styles.buttonText}>
                 {library.name}
               </Text>
             </Pressable>
 
-            {/* Floor Info */}
             {showTextBlocks[index] && (
               <View style={styles.textBlocks}>
                 <View style={styles.row}>
@@ -104,6 +165,44 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#00274C',
     marginBottom: 15,
+  },
+  cameraContainer: {
+    width: '100%',
+    height: 300,
+    marginBottom: 20,
+  },
+  camera: {
+    flex: 1,
+  },
+  cameraButtonContainer: {
+    flex: 1,
+    backgroundColor: 'transparent',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'flex-end',
+    marginBottom: 20,
+  },
+  cameraButton: {
+    backgroundColor: '#00274C',
+    padding: 15,
+    borderRadius: 10,
+  },
+  cameraButtonText: {
+    color: 'white',
+    fontSize: 16,
+  },
+  resultContainer: {
+    alignItems: 'center',
+    marginTop: 10,
+  },
+  processedImage: {
+    width: 200,
+    height: 200,
+    marginBottom: 10,
+  },
+  resultText: {
+    fontSize: 18,
+    fontWeight: 'bold',
   },
   sections: {
     width: '100%',
