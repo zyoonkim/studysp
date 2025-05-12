@@ -1,4 +1,5 @@
-# Smart Library Occupancy Monitor (Proof of Concept)
+# Smart Library Occupancy Monitor (Proof of Concept) 
+## ⚠️⚠️ Still in Progress ⚠️⚠️
 
 A proof-of-concept application demonstrating how real-time library space monitoring could work using AI-powered people detection. This prototype uses a mobile device's camera to simulate how the system would work with library-installed cameras.
 
